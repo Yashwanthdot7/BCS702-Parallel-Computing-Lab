@@ -8,6 +8,12 @@ cd /d "%~dp0"
 set NP=4
 if not "%~2"=="" set NP=%~2
 
+REM Find mpiexec: PATH first, then the default MS-MPI install folder
+set "MPIEXEC=mpiexec"
+where mpiexec >nul 2>nul
+if errorlevel 1 if exist "%ProgramFiles%\Microsoft MPI\Bin\mpiexec.exe" set "MPIEXEC=%ProgramFiles%\Microsoft MPI\Bin\mpiexec.exe"
+if errorlevel 1 if exist "%MSMPI_BIN%mpiexec.exe" set "MPIEXEC=%MSMPI_BIN%mpiexec.exe"
+
 set CH=%~1
 if not "%CH%"=="" goto run
 
@@ -32,18 +38,32 @@ if "%CH%"=="1" bin\p1_mergesort.exe
 if "%CH%"=="2" bin\p2_static_schedule.exe
 if "%CH%"=="3" bin\p3_fibonacci_tasks.exe
 if "%CH%"=="4" bin\p4_primes.exe
-if "%CH%"=="5" mpiexec -n 2 bin\p5_send_recv.exe
+if "%CH%"=="5" call :mpi -n 2 bin\p5_send_recv.exe
 if "%CH%"=="6" (
     echo.
     echo --- PART 1: Deadlock. The program will HANG. Press Ctrl+C to stop it. ---
-    mpiexec -n 2 bin\p6_deadlock.exe 1
+    call :mpi -n 2 bin\p6_deadlock.exe 1
     echo.
     echo --- PART 2: Deadlock avoided by changing the call order ---
-    mpiexec -n 2 bin\p6_deadlock.exe 2
+    call :mpi -n 2 bin\p6_deadlock.exe 2
 )
-if "%CH%"=="7" mpiexec -n %NP% bin\p7_broadcast.exe
-if "%CH%"=="8" mpiexec -n %NP% bin\p8_scatter_gather.exe
-if "%CH%"=="9" mpiexec -n %NP% bin\p9_reduce_allreduce.exe
+if "%CH%"=="7" call :mpi -n %NP% bin\p7_broadcast.exe
+if "%CH%"=="8" call :mpi -n %NP% bin\p8_scatter_gather.exe
+if "%CH%"=="9" call :mpi -n %NP% bin\p9_reduce_allreduce.exe
 if not "%~1"=="" goto :eof
 set CH=
 goto menu
+
+:mpi
+if "%MPIEXEC%"=="mpiexec" (
+    where mpiexec >nul 2>nul
+    if errorlevel 1 (
+        echo.
+        echo ERROR: MS-MPI is not installed, so programs 5-9 cannot run.
+        echo Install msmpisetup.exe from https://www.microsoft.com/en-us/download/details.aspx?id=105289
+        echo then close and reopen this terminal.
+        exit /b 1
+    )
+)
+"%MPIEXEC%" %*
+exit /b
