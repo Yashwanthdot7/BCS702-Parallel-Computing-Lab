@@ -1,6 +1,6 @@
 @echo off
 REM BCS702 Parallel Computing Lab - run any program 1 to 9
-REM Usage: run.bat            (shows a menu)
+REM Usage: .\run.bat          (shows a menu; in PowerShell the .\ is required)
 REM        run.bat 5          (runs program 5 directly)
 setlocal
 cd /d "%~dp0"

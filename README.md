@@ -7,10 +7,10 @@ All 9 programs (OpenMP + MPI), prebuilt for Windows. Clone and run.
 ```bat
 git clone https://github.com/Yashwanthdot7/BCS702-Parallel-Computing-Lab.git
 cd BCS702-Parallel-Computing-Lab
-run.bat
+.\run.bat
 ```
 
-Choose a program number from the menu. Or run one directly: `run.bat 5`.
+Choose a program number from the menu. Or run one directly: `.\run.bat 5`.
 
 **Requirements**
 - Programs 1–4 (OpenMP): nothing. The `.exe` files are statically linked.
@@ -19,7 +19,7 @@ Choose a program number from the menu. Or run one directly: `run.bat 5`.
 If a prebuilt `.exe` doesn't run, rebuild everything on that PC:
 
 ```bat
-build.bat
+.\build.bat
 ```
 
 `build.bat` needs gcc (CodeBlocks MinGW works; it's detected automatically) and the MS-MPI SDK (`msmpisdk.msi`).
